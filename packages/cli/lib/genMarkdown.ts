@@ -29,6 +29,16 @@ export default async (config: CliOptions) => {
   const files = await fg(include.concat(exclude.map(p => `!${p}`)))
 
   return files.map(async (p: string) => {
+    const mdFilePath = p.replace(/(.ts|.vue)$/, '.md')
+
+    // try read .md file
+    let mdFilePathAbs = ''
+    let mdFileContent = ''
+    try {
+      mdFilePathAbs = path.resolve(mdFilePath)
+      mdFileContent = await fs.readFile(mdFilePathAbs, 'utf-8')
+    } catch {}
+
     const abs = path.resolve(p)
     const source = await fs.readFile(abs, 'utf-8')
     try {
@@ -39,6 +49,11 @@ export default async (config: CliOptions) => {
       if (!markdownRes) return
 
       let str = markdownRes.content
+
+      // insert md file
+      if (mdFileContent)
+        str = str.replace(/^.*$/m, '# [name]\n\n' + mdFileContent)
+
       let compName = markdownRes.componentName
         ? markdownRes.componentName
         : path.basename(abs, '.vue')

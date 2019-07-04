@@ -312,11 +312,19 @@ export function parseJavascript(ast: bt.File, options: ParserOptions = {}) {
         ClassProperty(path: NodePath<bt.ClassProperty>) {
           const propDeco = getPropDecorator(path.node)
 
+          const typeAnnotation = path.node.typeAnnotation
+
           if (propDeco) {
             var typeString: string = ''
-            if (path.node.typeAnnotation)
-              if (path.node.typeAnnotation.type == 'TSTypeAnnotation')
-                typeString = path.node.typeAnnotation.typeAnnotation.type
+            if (typeAnnotation)
+              if (typeAnnotation.type == 'TSTypeAnnotation') {
+                if (
+                  typeAnnotation.typeAnnotation.type == 'TSTypeReference' &&
+                  typeAnnotation.typeAnnotation.typeName.type == 'Identifier'
+                )
+                  typeString = typeAnnotation.typeAnnotation.typeName.name
+                else typeString = typeAnnotation.typeAnnotation.type
+              }
 
             typeString = typeString.replace(/^(TS)|(Keyword)$/g, '') // make type names concise
 
