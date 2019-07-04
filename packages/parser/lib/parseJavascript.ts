@@ -311,10 +311,18 @@ export function parseJavascript(ast: bt.File, options: ParserOptions = {}) {
         // Class style component
         ClassProperty(path: NodePath<bt.ClassProperty>) {
           const propDeco = getPropDecorator(path.node)
+
           if (propDeco) {
+            var typeString: string = ''
+            if (path.node.typeAnnotation)
+              if (path.node.typeAnnotation.type == 'TSTypeAnnotation')
+                typeString = path.node.typeAnnotation.typeAnnotation.type
+
+            typeString = typeString.replace(/^(TS)|(Keyword)$/g, '') // make type names concise
+
             const result: PropsResult = {
               name: (path.node.key as bt.Identifier).name,
-              type: null,
+              type: typeString,
               describe: getComments(path.node).default
             }
             const propDecoratorArg = getArgumentFromPropDecorator(propDeco)
