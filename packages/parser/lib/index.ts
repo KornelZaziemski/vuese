@@ -203,5 +203,11 @@ export function parser(
     parseTemplate(astRes.templateAst, finallyOptions)
   }
 
+  // remove line breaks from prop defaults
+  if (res.props)
+    res.props.forEach(prop => {
+      if (prop.default) prop.default = prop.default.replace(/\n|\r/g, '')
+    })
+
   return res
 }

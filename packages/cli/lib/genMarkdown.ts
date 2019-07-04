@@ -3,7 +3,7 @@ import fg from 'fast-glob'
 import fs from 'fs-extra'
 import Log from 'log-horizon'
 import { CliOptions } from '.'
-import { parser } from '@vuese/parser'
+import { parser } from './../../parser/lib/index'
 import Render from '@vuese/markdown-render'
 
 const logger = Log.create()

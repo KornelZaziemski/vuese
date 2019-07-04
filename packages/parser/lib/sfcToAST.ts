@@ -26,7 +26,14 @@ export function sfcToAST(
       sourceType: 'module',
       plugins
     })
+  } else {
+    res.sourceType = 'ts'
+    res.jsAst = babelParse(source, {
+      sourceType: 'module',
+      plugins
+    })
   }
+
   if (sfc.template && sfc.template.content) {
     res.templateAst = compile(sfc.template.content, {
       comments: true
